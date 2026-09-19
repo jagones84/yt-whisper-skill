@@ -3,6 +3,10 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.0.1] - 2026-09-19
+
+- Renamed the skill/repository to `yt-whisper-skill` (folder, GitHub repo, frontmatter `name`, symlinks and config).
+
 ## [2.0.0] - 2026-09-19
 
 - Renamed the skill to `yt-whisper` and moved it into its own repository under `~/Repositories/`.

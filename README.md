@@ -1,4 +1,4 @@
-# yt-whisper
+# yt-whisper-skill
 
 An [OpenClaw](https://docs.openclaw.ai/) **skill** that transcribes YouTube videos locally with
 Whisper (CUDA) and archives clean, URL/title-headed transcript files. It also turns a transcript (or
@@ -21,8 +21,8 @@ one-shot installer that builds the local virtual environment.
 ## Install
 
 ```bash
-git clone https://github.com/<owner>/yt-whisper.git
-cd yt-whisper
+git clone https://github.com/<owner>/yt-whisper-skill.git
+cd yt-whisper-skill
 bash scripts/install.sh
 ```
 
@@ -35,7 +35,7 @@ bash scripts/install.sh
 To use it as an OpenClaw skill, symlink the repository into your skills root:
 
 ```bash
-ln -sfn "$PWD" ~/.openclaw/skills/yt-whisper
+ln -sfn "$PWD" ~/.openclaw/skills/yt-whisper-skill
 ```
 
 ## Usage
@@ -59,7 +59,7 @@ Output: `~/Transcriptions/<Category>/<safe_title>_<video_id>.txt`
 ## Repository layout
 
 ```
-yt-whisper/
+yt-whisper-skill/
 ├── SKILL.md            # skill definition + agent operating rules
 ├── README.md           # this file
 ├── LICENSE             # MIT

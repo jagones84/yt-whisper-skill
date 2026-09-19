@@ -1,12 +1,12 @@
 ---
-name: yt-whisper
+name: yt-whisper-skill
 description: Locally transcribe YouTube videos with Whisper on CUDA and archive a URL/title-headed .txt under ~/Transcriptions/<Category>/ (auto model selection, category inference, timestamp handling, temp cleanup). Also generates a structured *_AISUMMARY.md report and a compact *_AISEARCHPLAN.md research plan from any input file. Use for transcription, summary, or research-plan requests.
 metadata:
   emoji: 🎥
   os: [linux, darwin, win32]
 ---
 
-# yt-whisper
+# yt-whisper-skill
 
 Transcribes YouTube videos with the local `scripts/yt-transcribe.sh` and a self-contained Whisper
 toolchain (its own `.venv`, created by `scripts/install.sh`). It can also turn a transcript (or any
