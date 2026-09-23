@@ -70,6 +70,7 @@ yt-whisper-skill/
 ├── scripts/
 │   ├── install.sh      # one-shot setup (venv + deps + PATH copy)
 │   └── yt-transcribe.sh# the runner
+├── examples/           # real demo: transcript of a 19s video (see examples/README.md)
 └── .venv/              # local toolchain (gitignored)
 ```
 
