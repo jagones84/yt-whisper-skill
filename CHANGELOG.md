@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [SemVer](https://semver.org/).
 
+## [2.0.2] - 2026-09-23
+
+### Security
+- Removed concrete local secrets-file paths from the shipped docs (`AGENTS.md`, `README.md`,
+  `SKILL.md`). The "never commit tokens" guidance is now generic and names no host path.
+
 ## [2.0.1] - 2026-09-19
 
 - Renamed the skill/repository to `yt-whisper-skill` (folder, GitHub repo, frontmatter `name`, symlinks and config).

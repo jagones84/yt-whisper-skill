@@ -102,7 +102,7 @@ Hard rules for agents:
 - When the user asks for a research plan / NotebookLM input, produce `<same-name>_AISEARCHPLAN.md`
   (for ANY input file, not only transcriptions) following the `### Research plan` subsection, staying
   under ~4,600 characters
-- **MUST NOT** write secrets into any repo file; never commit tokens (they live in `~/.hermes/.env`)
+- **MUST NOT** write secrets into any repo file; never commit tokens (keep them in a secrets store outside the repo)
 
 ## Runtime Notes
 

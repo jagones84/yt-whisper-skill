@@ -76,7 +76,7 @@ yt-whisper-skill/
 ## Configuration
 
 Optional, via environment variables (see `.env.template`). No secret is required by this skill;
-tokens for other tooling live outside the repo (e.g. `~/.hermes/.env`) and are never committed.
+tokens for other tooling live in a secrets store outside the repo and are never committed.
 
 ## Security
 
