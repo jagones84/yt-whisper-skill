@@ -29,3 +29,6 @@ trash/
 # OS / editors
 .DS_Store
 Thumbs.db
+
+# local operator memory (never shipped)
+.agent/
