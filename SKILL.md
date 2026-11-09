@@ -1,7 +1,7 @@
 ---
 name: yt-whisper-skill
 version: 1.0.0
-description: Locally transcribe YouTube videos with Whisper on CUDA and pack each one as a source of a research archive at <root>/data/<leaf>/sources/urls/<stem>/ (transcript .txt, archive-transcript/1 .md, index.json, url.txt, optional summary.md), with the legacy ~/Transcriptions output still available. Also generates a structured summary and a research plan from any input file. Use for transcription, summary, or research-plan requests.
+description: Locally transcribe YouTube videos with Whisper on CUDA and pack each one as a source of a research archive at <root>/data/<leaf>/sources/urls/<stem>/ (transcript .txt, archive-transcript/1 .md, index.json, url.txt, optional summary.md); a legacy standalone output at ~/Transcriptions stays for non-archive callers. Also generates a structured summary and a research plan from any input file. Use for transcription, summary, or research-plan requests.
 metadata:
   emoji: 🎥
   os: [linux, darwin, win32]
@@ -18,7 +18,8 @@ input document) into a structured AI summary and a compact research plan.
 - Download YouTube audio and transcribe it with Whisper on CUDA
 - Auto-pick a faster model for long videos
 - Respect `t=` / `start=` / `end=` timestamps in YouTube URLs
-- Save to `~/Transcriptions/<Category>/` with a URL + title header
+- Pack each video as a source folder of the research archive (`--root/--leaf`), the default when a root is known
+- Legacy standalone mode: save to `~/Transcriptions/<Category>/` with a URL + title header (old callers only)
 - Infer the category from the title, or force one with `--category`
 - Support a single URL, several URLs, or bare 11-char video IDs
 - Optional language detection or forced language
@@ -149,13 +150,15 @@ that is usable for frontier implementation work.
 
 ### Where to save
 
-- Directory: `~/Transcriptions/.agent/summaries/<Category>/`
-  - `<Category>` MUST mirror the transcript's category subfolder. A transcript in
-    `~/Transcriptions/Technology/` maps to `~/Transcriptions/.agent/summaries/Technology/`.
+- **Archive mode (the default): inside the packed source folder.** Write `summary.md` beside the
+  transcript, `<R>/data/<leaf>/sources/urls/<stem>/summary.md` (or pass `--summary <path>` at pack
+  time). The summary is a file of that source, not a second tree.
+- **Legacy mode only** (no research root known, an old caller): `~/Transcriptions/.agent/summaries/<Category>/`
+  - `<Category>` MUST mirror the transcript's category subfolder.
   - If the transcript sits directly in `~/Transcriptions/` (no category), use `Unsorted`.
 - Filename: same base name as the transcript with `_AISUMMARY.md` appended
   (`DHH_..._NYFGCESmikA.txt` -> `DHH_..._NYFGCESmikA_AISUMMARY.md`)
-- Create the folder if missing (`mkdir -p`). The `.agent/` tree is metadata, never mixed with the raw transcripts.
+- Create the folder if missing (`mkdir -p`). Never mix metadata with the raw transcripts.
 
 ### How to build the summary
 
@@ -185,7 +188,9 @@ and NOT a list of keywords: it is a set of instructions plus one context-anchore
 
 **Where to save**
 
-- Transcriptions: `~/Transcriptions/.agent/summaries/<Category>/<same-name>_AISEARCHPLAN.md`
+- **Archive mode (the default):** the packed source folder,
+  `<R>/data/<leaf>/sources/urls/<stem>/summary.md` or `research_plan.md` beside the transcript.
+- **Legacy mode only** (no research root): `~/Transcriptions/.agent/summaries/<Category>/<same-name>_AISEARCHPLAN.md`
   (same folder and base name as the companion `_AISUMMARY.md` when one exists).
 - Any other input file: `<input-dir>/.agent/<input-base-name>_AISEARCHPLAN.md` (create the `.agent`
   folder next to the source file if missing).
