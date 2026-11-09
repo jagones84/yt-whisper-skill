@@ -1,7 +1,7 @@
 ---
 name: yt-whisper-skill
 version: 1.0.0
-description: Locally transcribe YouTube videos with Whisper on CUDA and archive a URL/title-headed .txt under ~/Transcriptions/<Category>/ (auto model selection, category inference, timestamp handling, temp cleanup). Also generates a structured *_AISUMMARY.md report and a compact *_AISEARCHPLAN.md research plan from any input file. Use for transcription, summary, or research-plan requests.
+description: Locally transcribe YouTube videos with Whisper on CUDA and pack each one as a source of a research archive at <root>/data/<leaf>/sources/urls/<stem>/ (transcript .txt, archive-transcript/1 .md, index.json, url.txt, optional summary.md), with the legacy ~/Transcriptions output still available. Also generates a structured summary and a research plan from any input file. Use for transcription, summary, or research-plan requests.
 metadata:
   emoji: 🎥
   os: [linux, darwin, win32]
@@ -62,7 +62,33 @@ If `install.sh` has been run, the same script is also available on PATH as `yt-t
 
 ## Output Format
 
-Each transcription is saved as `~/Transcriptions/<Category>/<safe_title>_<video_id>.txt` and starts with:
+Two destinations, one skill.
+
+**Archive mode (default when a research root is known).** A video is a URL like any other: pack it as
+a source of the archive.
+
+```bash
+{baseDir}/scripts/yt_archive.py --root <R> --leaf <domain>/<leaf> --url '<full youtube url>'
+{baseDir}/scripts/yt_archive.py --root <R> --leaf <domain>/<leaf> --transcript <file.txt> --slug <slug>
+```
+
+It transcribes (or takes `--transcript`, without download or GPU), then writes one folder
+`<R>/data/<leaf>/sources/urls/<date>_<slug>_<video_id>/` holding:
+
+| file | what it is |
+|---|---|
+| `<stem>.txt` | the transcript, original Whisper output |
+| `<stem>.md` | `archive-transcript/1`: front matter (title, url, video_id, fetched_at, sha256, chars, lines, extractor, format), a visible `> **Source:**` line, the transcript |
+| `index.json` | the same metadata, machine-readable, plus the transcript sha256 |
+| `url.txt` | the URL record (`key`, `canonical_url`, `acquired_via`, `status`) |
+| `summary.md` | only with `--summary` |
+
+It prints the batch line (`yt <slug> <url> <leaf>`), then `STEM=` and `FOLDER=`. Add the line to a
+batch and the registry row as usual; `render_indices.py` then rewrites `url.txt` and the leaf views.
+
+**Legacy mode.** `yt-transcribe.sh <url> [--output-dir DIR] [--category CAT]` still writes
+`~/Transcriptions/<Category>/<safe_title>_<video_id>.txt` with the header below. It exists for old
+callers; nothing new should land there.
 
 ```
 URL: https://youtube.com/watch?v=...
@@ -73,11 +99,13 @@ Title: <Video Title>
 
 Temporary media is deleted right after transcription.
 
+
 ## Operating Rules
 
 Hard rules for agents:
 
-- **MUST** invoke exactly `{baseDir}/scripts/yt-transcribe.sh` (or the installed `yt-transcribe`)
+- **MUST** use `{baseDir}/scripts/yt_archive.py` when a research root is known: that is the archive mode, the only one that produces a source
+- **MUST** keep `{baseDir}/scripts/yt-transcribe.sh` for legacy output only
 - **MUST** pass each requested video as a quoted positional argument to that script
 - **MUST** prefer the full YouTube URL when the user provides one
 - **MUST NOT** strip a provided YouTube URL down to a bare video ID before execution
@@ -93,16 +121,17 @@ Hard rules for agents:
 - Treat `exitCode != 0` as failure, and also treat the run as failure if the output contains
   `Error:`, `Video unavailable`, `Unknown option`, or `Audio download failed`
 - After a successful transcription, report the saved path first
-- Do not claim success just because other transcript files already exist in `~/Transcriptions`
+- Do not claim success just because other transcript files already exist under the leaf's `sources/urls/`; a packed transcript is announced by its `FOLDER=` line
+- **MUST NOT** create a second transcript tree: `~/Transcriptions` is legacy, never a destination
 - Never launch a second run for the same URL while another run for it is still in progress
 - If `--category` is omitted, infer it from the title (falling back to `Unsorted`); use
   `--category <Category>` only to force a different bucket
 - Do not read the whole transcript back into the LLM by default; read only a short excerpt if needed
 - After a successful transcription, if the user asks for a summary/report, follow the
-  `## Detailed AI Summary` section and save `~/Transcriptions/.agent/summaries/<Category>/<same-name>_AISUMMARY.md`
-- When the user asks for a research plan / NotebookLM input, produce `<same-name>_AISEARCHPLAN.md`
-  (for ANY input file, not only transcriptions) following the `### Research plan` subsection, staying
-  under ~4,600 characters
+  the `## Detailed AI Summary` section and save `summary.md` inside the packed source folder (or pass `--summary <path>` at pack time)
+- When the user asks for a research plan / NotebookLM input, produce `research_plan.md` in the same
+  source folder (legacy name: `<same-name>_AISEARCHPLAN.md`), for ANY input file, following the
+  `### Research plan` subsection and staying under ~4,600 characters
 - **MUST NOT** write secrets into any repo file; never commit tokens (keep them in a secrets store outside the repo)
 
 ## Runtime Notes
